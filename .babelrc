@@ -1,0 +1,5 @@
+//babelrc es una especie de objeto json (por eso las {})
+//configurar dentro de babelrc los presets y a estos presets indicarles que vamos a utilizar el preset de @babel/preset-env
+{
+  "presets": ["@babel/preset-env"]
+}
