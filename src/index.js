@@ -1,51 +1,11 @@
+//index dentro de src, y en le package.json tengo que configurar donde diga index la ruta correcta (./src/index.js) -> arch ppal del proyecto -> configurar la inicialización p/q funcione
+
 //acá vamos a empezar a tirar toda la config que necesitamos p/trabajar con el back -> hacer las config necesarias p/q quede configurado el backend
 //lo 1ero que vamos a utilizar es www.babeljs.io
-//node.js, p/hacer las importaciones en lugar de usar la palabra "import", nos pide la palabra "require", ej:
-//                     entre "" pongo el nombre de la librería a la cual quiero acceder
-//const hola = require(""); --> como ésto es medio molesto, se utiliza babel
 
 //babel es un compilador que nos permite utilizar lenguaje de nueva generación de js y lo traduce en un lenguaje de vieja generación p/q todos los vanegadores tengan acceso al mismo
 //instalar una serie de librerias necesarias que hacen referencia a babel -> p/q en lugar de usar el "require" usemos el "import"
 //npm install @babel/cli @babel/core @babel/node @babel/preset-env
-
-//#region creación de backend con node js sin babel, exportación con require y express
-/* 
-//con node js es module.exports = {} -> es un obj que va a recibir los módulos que vamos a exportar
-
-//éste de abajo es todo el código que se necesita p/hacer un back con node js, sin babel
-
-//npm install express (express es una librería que me va a devolver una función, es decir, es una func, lo tengo que ejecutar, pero esta func me va a devolver toda la config de mi proyecto)
-//ahora vamos a hacer con "require"
-const express = require("express");
-
-//estamos trayendo la librería de express p/usarla
-//vamos a crear una variable que se va a llamar app, y la vamos a igualar a express
-const app = express();
-
-//app tiene todos estos verbos configurados a través de
-//este get hace referencia al verbo que yo quiero que tenga mi endpoint (puede ser cualquier otro)
-//estos verbos son funciones que reciben parámetros -> 1ero la url a la cual hay que ir , 2do una func (que en este caso va a devolver un "hola mundo" en html) que recibe dos paráms puntuales: el request y el response
-//      url base, que en este caso va a ser localhost y el puerto que le indiquemos barra (localhost:puerto/)
-//            el obj request hace ref a todos los datos que traemos del front -> todo el obj que me envía el front
-//                 response es el obj que vamos a usar para responderle al front
-app.get("/", (req, res) => {
-  //en este caso vamos a usar res.send, que es un método p/enviar info al front, p/enviar una respuesta
-  //cuando accedamos a la barra diagonal (/) vamos a poder acceder al "Hola Mudno" que me va a estar enviando el backend
-  res.send("<h1>Hola Mundo</h1>"); // -> string creado a mano
-});
-
-//ahora tenemos que crear nstra aplic -> p/eso vamos a utilizar un método que tmb tiene
-//  listen es un método al cual le voy a indicar como 1er parám el puerto al que quiero acceder, 2do recibo una func
-app.listen(3000, () => {
-  console.log("Escuchando puerto 3000");
-});
-
-//si pongo " node index.js " en la terminal, me dice que está escuchando el puerto y ahí puedo poner en la barra de navegación de la web " localhost:3000/ " (la / no es necesaria en este caso) y me lleva al "Hola Mundo"
-
-//si hago algún cambio (por ej agregarles oo al Hola Mundo), tengo que escribir Ctrl+C en la terminal y tirar mi servidor y volver a escribir node index.js p/que se actualicen los cambios
-
-*/
-//#endregion
 
 //#region -- con babel -> agregando en package.json en "scripst" "dev/start": "nodemon index.js --exec babel-node"
 //                                                                                              ésto es lo que agreggo (ejecutar babel-node)
@@ -54,25 +14,19 @@ app.listen(3000, () => {
 
 import express from "express";
 import cors from "cors";
+//importar el archivo de la base de datos -> importamos la func connect de db.js
+import connect from "./database/db"; // abajo antes de que se ponga el app.listen podemos poner "connect"
+//ya puedo acceder al modelo del empleado
+import empleadoSchema from "./models/empleado"; // -> lo usamos p/crear y traer empleados (?
 
 const app = express();
 
-//vamos a crear un array
-let arrayEmpleados = [
-  //acá vamos a poner un obj
-  {
-    id: 1,
-    nombre: "Candelaria",
-    apellido: "VM",
-    dni: "39.000.000",
-  },
-  {
-    id: 2,
-    nombre: "Woli",
-    apellido: "VM",
-    dni: "35.111.222",
-  },
-];
+//ahora con MongoDB
+//vamos a crear un empleado y vamos a traer los empleados p/leerlos p/ya no vamos a usar el array (arrayEmpleados) pq ya no sirve
+//vamos a importar arriba el esquema de la bd
+
+//vamos a empezar a usar el esquema del empleado abajo
+//1ero necesitamos crear el empleado -> vamos a disponer un endpoint a través del cuál vamos a crear el empleado -> vamos a usar el post
 
 //el cuerpo siempre se condifica, p/decodificarlo configuramos el parseo del body con la línea de código de abajo
 //le estamos diciendo que use un método de express que va a convertir el cuerpo en un json y nos va a permitir decodificarlo -> ya me aparece la info en la terminal en lugar de undefined cuando envío la petición desde postman (post)
@@ -83,15 +37,8 @@ app.use(express.json());
 //como es una func la ejecutamos directam dentro del app.use
 app.use(cors());
 
+//los verbos son endpoints (?
 //ir creando las url p/q cuando acceda a los empleado pueda gestionarlos
-
-//dejo éste app.get p/q me sirva de referencia
-app.get("/", (req, res) => {
-  //especie de return (?
-  //en este caso vamos a usar res.send, que es un método p/enviar info al front, p/enviar una respuesta
-  //cuando accedamos a la barra diagonal (/) vamos a poder acceder al "Hola Mudno" que me va a estar enviando el backend
-  res.send("<h1>Hola Mundo</h1>"); // -> string creado a mano
-});
 
 //  get p/leer un empleado
 //       que cuando el usuario entre a /empleados, que me devuelva toda la lista de los empleados
@@ -122,35 +69,65 @@ app.get("/empleados/:id", (req, res) => {
   });
 });
 
+//vamos a empezar a usar el esquema del empleado
+//vamos a disponer de éste endpoint p/crear el empleado
 //  post p/agregar un empleado
-//        si bien estoy colocando la misma url que en get, va a funcionar pq el verbo es distinto(?
+//acá tenemos la resolución de nstro esquema -> ahora crear ese empleado en la base de datos --> me voy al postman a probar
 app.post("/empleados", (req, res) => {
-  //estoy tomando los datos del body
+  //estoy recuperando los datos del body que me va a enviar el usuario
   //acá vamos a hacer destructuring del body - del cuerpo de la petición
   //    voy a obtener nombre, apellido y dni de req.body
   const { nombre, apellido, dni } = req.body;
 
-  //acá estoy creando un obj
-  const nuevoEmpleado = {
-    //el id me va a permitir buscar en el array de empleado p/traer el obj (?
-    //            porque le quiero sumar 1 al array
-    id: arrayEmpleados.length + 1,
-    //no estoy colocando éstas propiedades, pq como se llaman igual ya está (igual con el destruct de arriba(? )
+  //borramos la const donde estabamos creando el nuevoEmpleado pq no hace falta que haga eso, y borro el push
+  //vamos a configurar mejor el res.json
+
+  //vamos a crear la ruta p/poder crear un nuevo empleado/registro/documento dentro de nstra base de datos
+  //vamos a utilizar el esquema que acabamo de importar p/crear ese empleado
+  //vamos a envolver esto en un try/catch p/probar que funcione -> puede ser con un promise.then tmb pq devuelve promesas
+  //1ero lo vamos a hacer con promesa
+
+  //                                  propiedad que si me apoyo veo que recibe nombre, apellido, dni como la const de arriba
+  //ésto me devuelve una promesa, con esa promesa tengo que enviarle la info a nstro usuario en base a esa promesa
+  /* ésto tenía escrito y lo tranformé a promesa (?
+  const nuevoEmpleado = empleadoSchema.create({
     nombre,
     apellido,
     dni,
-  };
-
-  //acá estoy almacenando en un array
-  arrayEmpleados.push(nuevoEmpleado);
-  //especie de return (?
-  //de ésta forma ya le estoy respondiendo un json, le estoy diciendo que me responda un json que va a tener una propiedad que se llame ok true
-  //ésto me devuelve en la petición del post en postman
-  res.json({
-    ok: true,
   });
+  */
+  empleadoSchema
+    .create({
+      nombre,
+      apellido,
+      dni,
+    })
+    //vamos a recibir la respuesta de la base de datos, y si la resp entra por el then, tenemos la respuesta del empleado creado
+    .then((res) => {
+      //una vez que se almacene un documento en la base de datos (el esquema de arriba), la repsuesta de la base siempre es el documento que acaba de crear
+      /* ésta varible estaba hecha si en el res.json de abajo devolvía nuevoEmpleado en data
+      const nuevoEmpleado = res;
+      */
+
+      res.json({
+        ok: true,
+        //    podemos devolver res o nuevoEmpleado, según sea más "cómodo", si uso res, me ahorro de usar la variable que había creado y dejé comentada arriba
+        data: res,
+      });
+    })
+    //acá devuelvo un error en caso de que falle todo
+    .catch((err) => {
+      console.log(err);
+      res.json({
+        ok: false,
+        error: err,
+      });
+    });
 });
 
+//comentar el put y el delete
+
+/*
 //              como quiero hacer una actualización, tmb voy a necesitar el id
 app.put("/empleados/:id", (req, res) => {
   //1ero vamos a tomar el id de la request . params
@@ -176,7 +153,9 @@ app.put("/empleados/:id", (req, res) => {
     ok: true,
   });
 });
+ */
 
+/* 
 app.delete("/empleados/:id", (req, res) => {
   //volvemos a tomar el id de la request . params
   //   obtenemos el id de las params que va a mandar de la request (las params son las que están dsp de la barra diagonal " / ")
@@ -195,6 +174,11 @@ app.delete("/empleados/:id", (req, res) => {
     ok: true,
   });
 });
+*/
+
+//de ésta forma nos comunicamos a la base de datos y escuchamos (el connect y el listen)
+
+connect(); // la acabamos de importar arriba de db.js
 
 //ahora tenemos que crear nstra aplic -> p/eso vamos a utilizar un método que tmb tiene
 //  listen es un método al cual le voy a indicar como 1er parám el puerto al que quiero acceder, 2do recibo una func

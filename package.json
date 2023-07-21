@@ -2,9 +2,9 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "primer backend en node js",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "dev": "nodemon index.js --exec babel-node"
+    "dev": "nodemon ./src/index.js --exec babel-node"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.4.0"
   }
 }
