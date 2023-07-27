@@ -1,16 +1,1 @@
-# Ejemplo de .gitignore
-
-# Excluir la carpeta node_modules
-node_modules/
-
-# Excluir archivos de configuración locales (por ejemplo, .env)
-*.env
-
-# Excluir archivos generados por el compilador
-dist/
-
-# Excluir archivos de logs
-logs/
-
-# Excluir archivos de pruebas temporales
-test-results/
+node_modules/*
