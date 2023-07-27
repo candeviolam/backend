@@ -39,3 +39,6 @@ const empleadoSchema = new Schema({
 //                            éste método lo que hace es recibir como parám el tipo del nombre del modelo/la colección(? (Empleado dentro de ProyectoA -> chequear en MonDBCompass) -> mismo nombre p/q la librería sepa adonde quiero almacenar, es el Empleado que se llama así en la base de datos
 //                                        como 2do parám le pasamos el esquema que acabamos de crear
 export default mongoose.model("Empleado", empleadoSchema);
+//este objeto usamos en index.js
+// el esquema es el obj que estoy exportando, que me va a permitir realizar todas las acciones sobre la bd -> leer, modificar etc , pero solo de el documento " empleados " en este de caso, de mongodbCompass 
+// cada modelo gestiona un documento de mongodbCompass (siguiendo el renglón de arriba)
