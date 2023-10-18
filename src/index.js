@@ -22,6 +22,8 @@ import connect from "./database/db"; // abajo antes de que se ponga el app.liste
 //     e o E ?
 //     objeto de tipo esquema que me va a prover de todas la funcionalidades sobre el documento "empleados" de mongoDBCompass por ej
 import EmpleadoSchema from "./models/empleado"; // -> lo usamos p/crear y traer empleados (?
+//       importamos ésto para agregar la lógica al app.get
+import { GetEmployees } from "./controllers/empleado.controller";
 
 const app = express();
 
@@ -46,45 +48,16 @@ app.use(cors());
 
 //cuando estamos en la ruta usamos el esquema, que es el obj que estoy exportando en empleado.js, el esquema me va a permitir realizar todas las acciones sobre la bd
 
+//en lugar de hacer esto acá en la ruta, me llevo toda esta lógica a un controlador en una función, ejecuto esa func acá adentro y listo
+//tomo la lógica que tenía en index.js en el 1er get y me la llevo a empleado.controller.js para limpiar el código acá
+
 //get p/traer los empleados de la base de datos gracias a la librería/? importada arriba (empleadoSchema)
 //  get p/leer un empleado
 //       que cuando el usuario entre a /empleados, que me devuelva toda la lista de los empleados
-app.get("/empleados", (req, res) => {
-  //especie de return (?
-  //acá simplemente le estamos indicando que le vamos a devolver un obj, que va a ser arrayEmpleados
-  //puedo acceder al body de la petición como si fuera un obj pq ya está convertido en obj (?
-  //acá get estaba haciendo res.json del array de empleados ( res.json(arrayEmpleados); ), como el array de empleados ya no existe, eso va a marcar error, entonces tenemos que obtener todos los empleados
-  //vamos a hacer el get así traemos todos los empleados, cómo obtener todos los empleados..
-  //             tiene una func que se llama find, y el find ya directamente trae todo // find me devuelve una query
-  EmpleadoSchema.find()
-    //.then o .exec (execute) según estemos haciendo con promesa o con asincronía, pero cualq puede ser -> exec no hace falta que se use cuando usamos asincronía
-    //.exec para ejecutar la query que me devuelve find, y éste ejecutar ya nos devuelve una promesa que ya la podemos trabajar y obtener el resultado de la query que acabamos de ejecutar
-    .exec()
-    //si se va por el then es pq respondió correctamente, en ese caso voy a tomar los resultados (results) y voy a crear un json -> respuesta del then
-    .then((results) => { // -> objeto de respuesta, puedo crearlo como quiera
-      //opción 2 -> let htmlString = '';
 
-      //                           por cada elemento => ..
-      //opc 2.1 -> results.forEach(el => {
-      //  htmlString += `<h1>${el.nombre}</h1>`;
-      //})
-
-      res.json({
-        // este obj puede ser tan complejo como quiera (dentro de json puedo mandar objs, arrays, html, etc) --> por ej la api de rick&morty devuelve dos objs, el obj info con la pag anterio, siguiente, cantidad de , etc; y el obj results con los resultados directam (name, id, status, gender, etc)
-        ok: true,
-        data: results, // acá ya veo los resultados en la consola de postman con el get
-        //opción 1 -> html: `<h1>${results[0].nombre}</h1>`, // -> a ésto lo puedo ver en postman cuando hago la petición
-        //opc 2.2 -> html: htmlString,    -------->>>>>>> dsp les haría un useState a los html en App.jsx de easy-front
-      });
-    })
-    .catch((err) => { // -> obj de error, puedo crearlo como quiera
-      console.log(err);
-      res.json({
-        ok: false, // p/q no me devuelva nada(?
-        err, // le pasamos el error que tenemos ahí
-      });
-    });
-});
+//                    lo que recibo como 2do parám de la func get es una función que tiene un req de tipo Request y un res de tipo Response
+//                    si tengo un func que recibe los mismos paráms que la func que tengo que pasar (GetEmployees de empleado.controller.js), por sintaxis no hace falta que los tenga acá arriba en el app.get ya que los recibo en la función siguiente, con poner el nombre de la función basta -> o sea que de " app.get("/empleados", (req, res) => { ", paso a:
+app.get("/empleados", GetEmployees); // -> javascript va a encargarse de mandarle los paráms (todo lo que dice en el renglón de arriba) -> es como si en lugar de llamar a la func para mandarle los parámetros, estuviera enviando esa función como parámetro, por eso no necesito pasarle nada
 
 //dsp de haber hecho el get de arriba, vamos a arreglar éste get
 //este get nos va a permitir obtener el empleado a través del id
@@ -168,6 +141,10 @@ app.post("/empleados", (req, res) => {
     });
   //cuando hago la petición en postman ya me aparece el empleado y ya debería haberse guardado en mongodbCompass
 });
+
+//para segmentar
+//hacer una ruta para que el empleado se haga un usuario
+app.post("/empleado/:id/usuario");
 
 //comentar el put y el delete
 

@@ -37,6 +37,7 @@ const empleadoSchema = new Schema({
   },
 });
 
+/*
 //                     (viene desde arriba) al obj schema de la librería mongoose le creamos un modelo con el método .model al cual le asignamos un alias ("Empleado")(?
 //una vez que creo el modelo lo exporto -> indico cuál es el nombre del modelo no en la base, sino en el proyecto en sí -> me voy a referir al esquema este como Empleado
 //exportar un obj que me va a traer todas las funcionalidades del empleado (?
@@ -46,9 +47,9 @@ export default mongoose.model("Empleado", empleadoSchema);
 //este objeto usamos en index.js
 // el esquema es el obj que estoy exportando, que me va a permitir realizar todas las acciones sobre la bd -> leer, modificar etc , pero solo de el documento " empleados " en este de caso, de mongodbCompass 
 // cada modelo gestiona un documento de mongodbCompass (siguiendo el renglón de arriba)
+*/
 
 
-/*
 // cambié el mongoose model, en lugar de exportarlo directamente lo almaceno en una variable 
 
 //                 (viene desde arriba) al obj schema de la librería mongoose le creamos un modelo con el método .model al cual le asignamos un alias ("Empleado")(?
@@ -63,4 +64,3 @@ export default EmpleadoDb;
 //este objeto usamos en index.js
 // el esquema es el obj que estoy exportando, que me va a permitir realizar todas las acciones sobre la bd -> leer, modificar etc , pero solo de el documento " empleados " en este de caso, de mongodbCompass 
 // cada modelo gestiona un documento de mongodbCompass (siguiendo el renglón de arriba)
-*/
